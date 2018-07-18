@@ -1,2 +1,0 @@
-# ThreeSculpt
-Created with CodeSandbox
