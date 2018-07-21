@@ -7,13 +7,18 @@ class ThreeRenderer extends React.Component {
     super(props);
     this.state = {};
     this.onResize = this.onResize.bind(this);
+    this.onTouchMove = this.onTouchMove.bind(this);
+    this.checkIntersection = this.checkIntersection.bind(this);
+    this.mouse = { x: 0, y: 0 };
   }
 
   componentDidMount() {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    const scene = new THREE.Scene();
+    const raycaster = (this.raycaster = new THREE.Raycaster());
+
+    const scene = (this.scene = new THREE.Scene());
     scene.background = new THREE.Color(0x222222);
 
     const renderer = (this.renderer = new THREE.WebGLRenderer({
@@ -42,21 +47,37 @@ class ThreeRenderer extends React.Component {
 
     const controls = (this.controls = new OrbitControls(this.camera));
 
-    const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({
       color: 0xff0000
     });
-    const cube = new THREE.Mesh(geometry, material);
+
+    const cubes = new THREE.Mesh(geometry, material);
+
+    const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    voxelArray.map(x => {
+      voxelArray.map(y => {
+        voxelArray.map(z => {
+          const cube = cubes.clone();
+          cube.position.set(x, y, z);
+          scene.add(cube);
+        });
+      });
+    });
 
     const outlineMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       side: THREE.BackSide
     });
-    const outlineMesh = new THREE.Mesh(geometry, outlineMaterial);
-    outlineMesh.position.set(cube.position.x, cube.position.y, cube.position.z); // = cube.position;
-    outlineMesh.scale.multiplyScalar(1.05);
+    const outlineMesh = (this.outlineMesh = new THREE.Mesh(
+      geometry,
+      outlineMaterial
+    ));
+    //outlineMesh.position.set(cube.position.x, cube.position.y, cube.position.z); // = cube.position;
+    outlineMesh.scale.multiplyScalar(1.5);
+    outlineMesh.visible = true;
+    outlineMesh.position.set(0, 0, 4);
 
-    scene.add(cube);
     scene.add(outlineMesh);
 
     const light_p = new THREE.PointLight(0xffffff);
@@ -77,10 +98,10 @@ class ThreeRenderer extends React.Component {
     };
     animate();
 
-    this.cube = cube;
-
     this.onResize();
     window.addEventListener("resize", this.onResize);
+    window.addEventListener("mousemove", this.onTouchMove);
+    window.addEventListener("touchmove", this.onTouchMove);
   }
 
   componentWillUnmount() {
@@ -94,6 +115,35 @@ class ThreeRenderer extends React.Component {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  onTouchMove(e) {
+    let x, y;
+
+    if (e.changedTouches) {
+      x = e.changedTouches[0].pageX;
+      y = e.changedTouches[0].pageY;
+    } else {
+      x = e.clientX;
+      y = e.clientY;
+    }
+
+    this.mouse.x = (x / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(y / window.innerHeight) * 2 + 1;
+
+    this.checkIntersection();
+  }
+
+  checkIntersection() {
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+
+    const intersects = this.raycaster.intersectObjects([this.scene], true);
+
+    if (intersects.length > 0) {
+      const selectedObject = intersects[0].object;
+      const { x, y, z } = selectedObject.position;
+      this.outlineMesh.position.set(x, y, z);
+    }
   }
   storeRef = node => {
     this.canvas = node;
