@@ -11,6 +11,7 @@ class ThreeRenderer extends React.Component {
     this.onClick = this.onClick.bind(this);
     this.getIntersectedObject = this.getIntersectedObject.bind(this);
     this.mouse = { x: 0, y: 0 };
+    this.prevSelectedObj = null;
   }
 
   componentDidMount() {
@@ -49,8 +50,12 @@ class ThreeRenderer extends React.Component {
     const controls = (this.controls = new OrbitControls(this.camera));
 
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({
+    const material = (this.nonSelectedMaterial = new THREE.MeshLambertMaterial({
       color: 0xff0000
+    }));
+
+    this.selectedMaterial = new THREE.MeshLambertMaterial({
+      color: 0xffffff
     });
 
     const cubes = new THREE.Mesh(geometry, material);
@@ -65,21 +70,6 @@ class ThreeRenderer extends React.Component {
         });
       });
     });
-
-    const outlineMaterial = new THREE.MeshBasicMaterial({
-      color: 0x000000,
-      side: THREE.BackSide
-    });
-    const outlineMesh = (this.outlineMesh = new THREE.Mesh(
-      geometry,
-      outlineMaterial
-    ));
-    //outlineMesh.position.set(cube.position.x, cube.position.y, cube.position.z); // = cube.position;
-    outlineMesh.scale.multiplyScalar(1.5);
-    outlineMesh.visible = true;
-    outlineMesh.position.set(0, 0, 4);
-
-    scene.add(outlineMesh);
 
     const light_p = new THREE.PointLight(0xffffff);
     light_p.position.set(100, 100, 100);
@@ -138,9 +128,12 @@ class ThreeRenderer extends React.Component {
 
     const obj = this.getIntersectedObject();
     if (obj) {
-      const { x, y, z } = obj.position;
-      this.outlineMesh.position.set(x, y, z);
+      if (this.prevSelectedObj && obj !== this.prevSelectedObj) {
+        this.prevSelectedObj.material = this.nonSelectedMaterial;
+      }
+      obj.material = this.selectedMaterial;
       //obj.material.color.setRGB(64, 64, 64); --> doesn't work ; it will change the material, which is shared by all cubes
+      this.prevSelectedObj = obj;
     }
   }
 
@@ -169,6 +162,7 @@ class ThreeRenderer extends React.Component {
       return null;
     }
   }
+
   storeRef = node => {
     this.canvas = node;
   };
