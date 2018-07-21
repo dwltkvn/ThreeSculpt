@@ -8,6 +8,7 @@ class ThreeRenderer extends React.Component {
     this.state = {};
     this.onResize = this.onResize.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
+    this.onClick = this.onClick.bind(this);
     this.checkIntersection = this.checkIntersection.bind(this);
     this.mouse = { x: 0, y: 0 };
   }
@@ -102,10 +103,14 @@ class ThreeRenderer extends React.Component {
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
     window.addEventListener("touchmove", this.onTouchMove);
+    window.addEventListener("click", this.onClick);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.onResize);
+    window.removeEventListener("mousemove", this.onTouchMove);
+    window.removeEventListener("touchmove", this.onTouchMove);
+    window.removeEventListener("click", this.onClick);
     this.renderer.dispose();
   }
 
@@ -131,7 +136,25 @@ class ThreeRenderer extends React.Component {
     this.mouse.x = (x / window.innerWidth) * 2 - 1;
     this.mouse.y = -(y / window.innerHeight) * 2 + 1;
 
-    this.checkIntersection();
+    const obj = this.checkIntersection();
+    if (obj) {
+      const { x, y, z } = obj.position;
+      this.outlineMesh.position.set(x, y, z);
+      //obj.material.color.setRGB(64, 64, 64);
+    }
+  }
+
+  onClick(e) {
+    const x = e.clientX;
+    const y = e.clientY;
+
+    this.mouse.x = (x / window.innerWidth) * 2 - 1;
+    this.mouse.y = -(y / window.innerHeight) * 2 + 1;
+
+    const obj = this.checkIntersection();
+    if (obj) {
+      obj.visible = false;
+    }
   }
 
   checkIntersection() {
@@ -141,8 +164,9 @@ class ThreeRenderer extends React.Component {
 
     if (intersects.length > 0) {
       const selectedObject = intersects[0].object;
-      const { x, y, z } = selectedObject.position;
-      this.outlineMesh.position.set(x, y, z);
+      return selectedObject;
+    } else {
+      return null;
     }
   }
   storeRef = node => {
