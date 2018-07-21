@@ -9,7 +9,7 @@ class ThreeRenderer extends React.Component {
     this.onResize = this.onResize.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
     this.onClick = this.onClick.bind(this);
-    this.checkIntersection = this.checkIntersection.bind(this);
+    this.getIntersectedObject = this.getIntersectedObject.bind(this);
     this.mouse = { x: 0, y: 0 };
   }
 
@@ -56,9 +56,9 @@ class ThreeRenderer extends React.Component {
     const cubes = new THREE.Mesh(geometry, material);
 
     const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
-    voxelArray.map(x => {
-      voxelArray.map(y => {
-        voxelArray.map(z => {
+    voxelArray.forEach(x => {
+      voxelArray.forEach(y => {
+        voxelArray.forEach(z => {
           const cube = cubes.clone();
           cube.position.set(x, y, z);
           scene.add(cube);
@@ -136,11 +136,11 @@ class ThreeRenderer extends React.Component {
     this.mouse.x = (x / window.innerWidth) * 2 - 1;
     this.mouse.y = -(y / window.innerHeight) * 2 + 1;
 
-    const obj = this.checkIntersection();
+    const obj = this.getIntersectedObject();
     if (obj) {
       const { x, y, z } = obj.position;
       this.outlineMesh.position.set(x, y, z);
-      //obj.material.color.setRGB(64, 64, 64);
+      //obj.material.color.setRGB(64, 64, 64); --> doesn't work ; it will change the material, which is shared by all cubes
     }
   }
 
@@ -151,13 +151,13 @@ class ThreeRenderer extends React.Component {
     this.mouse.x = (x / window.innerWidth) * 2 - 1;
     this.mouse.y = -(y / window.innerHeight) * 2 + 1;
 
-    const obj = this.checkIntersection();
+    const obj = this.getIntersectedObject();
     if (obj) {
       obj.visible = false;
     }
   }
 
-  checkIntersection() {
+  getIntersectedObject() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
     const intersects = this.raycaster.intersectObjects([this.scene], true);
