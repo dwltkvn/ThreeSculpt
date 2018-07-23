@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import ThreeRenderer from "./threeRenderer";
 
 import Button from "grommet/components/Button";
+import Box from "grommet/components/Box";
 
 const divStyle = {
   border: "red",
@@ -44,8 +45,25 @@ class App extends React.Component {
   render() {
     return (
       <div className="App" style={divStyle}>
+        <Box
+          full="horizontal"
+          direction="row"
+          separator="all"
+          justify="center"
+          responsive={false}
+        >
+          <Button
+            fill={true}
+            label="(S)culpt"
+            onClick={() => this.handleClick()}
+          />
+          <Button
+            fill={true}
+            label="(C)olorize"
+            onClick={() => this.handleClick()}
+          />
+        </Box>
         <ThreeRenderer ref={el => (this.threeRendererRef = el)} />
-        <Button label="(S)culpt" onClick={() => this.handleClick()} />
       </div>
     );
   }

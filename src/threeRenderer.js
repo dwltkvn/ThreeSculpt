@@ -97,7 +97,7 @@ class ThreeRenderer extends React.Component {
     //this.onResize();
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
-    window.addEventListener("touchmove", this.onTouchMove);
+    window.addEventListener("touchmove", this.onTouchMove, true);
   }
 
   componentWillUnmount() {
