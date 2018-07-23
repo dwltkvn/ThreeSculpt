@@ -56,6 +56,8 @@ class ThreeRenderer extends React.Component {
       color: 0xffffff
     });
 
+    this.colorMaterial = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+
     const cubes = new THREE.Mesh(geometry, material);
 
     const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
@@ -64,6 +66,7 @@ class ThreeRenderer extends React.Component {
         voxelArray.forEach(z => {
           const cube = cubes.clone();
           cube.position.set(x, y, z);
+          cube.currentColorMaterial = this.nonSelectedMaterial;
           scene.add(cube);
         });
       });
@@ -139,7 +142,16 @@ class ThreeRenderer extends React.Component {
   highlightSelectedObject(obj, highlight = true) {
     if (obj) {
       if (highlight) obj.material = this.selectedMaterial;
-      else obj.material = this.nonSelectedMaterial;
+      else {
+        obj.material = obj.currentColorMaterial;
+      }
+    }
+  }
+
+  colorize() {
+    const obj = this.getIntersectedObject();
+    if (obj) {
+      obj.currentColorMaterial = this.colorMaterial;
     }
   }
 

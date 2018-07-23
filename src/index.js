@@ -19,7 +19,8 @@ const divStyle = {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleSculptClick = this.handleSculptClick.bind(this);
+    this.handleColorizeClick = this.handleColorizeClick.bind(this);
     this.handleKey = this.handleKey.bind(this);
   }
 
@@ -35,11 +36,17 @@ class App extends React.Component {
     const keyCode = e.which;
     if (keyCode === 83) {
       if (this.threeRendererRef) this.threeRendererRef.sculpt();
+    } else if (keyCode === 67) {
+      if (this.threeRendererRef) this.threeRendererRef.colorize();
     }
   }
 
-  handleClick() {
+  handleSculptClick() {
     if (this.threeRendererRef) this.threeRendererRef.sculpt();
+  }
+
+  handleColorizeClick() {
+    if (this.threeRendererRef) this.threeRendererRef.colorize();
   }
 
   render() {
@@ -55,12 +62,12 @@ class App extends React.Component {
           <Button
             fill={true}
             label="(S)culpt"
-            onClick={() => this.handleClick()}
+            onClick={() => this.handleSculptClick()}
           />
           <Button
             fill={true}
             label="(C)olorize"
-            onClick={() => this.handleClick()}
+            onClick={() => this.handleColorizeClick()}
           />
         </Box>
         <ThreeRenderer ref={el => (this.threeRendererRef = el)} />
