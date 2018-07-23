@@ -7,6 +7,10 @@ import ThreeRenderer from "./threeRenderer";
 import Button from "grommet/components/Button";
 import Box from "grommet/components/Box";
 import SyncIcon from "grommet/components/icons/base/Sync";
+import EditIcon from "grommet/components/icons/base/Edit";
+import TroisDIcon from "grommet/components/icons/base/3d";
+import DownloadIcon from "grommet/components/icons/base/Download";
+import RevertIcon from "grommet/components/icons/base/Revert";
 
 const divStyle = {
   border: "red",
@@ -100,21 +104,24 @@ class App extends React.Component {
           responsive={false}
         >
           <Button
+            icon={<TroisDIcon />}
             fill={true}
             label="(S)culpt"
             onClick={() => this.handleSculptClick()}
+          />
+          <Button icon={<RevertIcon />} />
+          <Button
+            fill={true}
+            icon={<EditIcon />}
+            label="(C)olorize"
+            onClick={() => this.handleColorizeClick()}
           />
           <Button
             style={syncButtonStyle}
             icon={<SyncIcon />}
             onClick={() => this.handleChangeColorClick()}
           />
-          <Button
-            fill={true}
-            label="(C)olorize"
-            onClick={() => this.handleColorizeClick()}
-          />
-          <Button fill={true} label="Export" />
+          <Button icon={<DownloadIcon />} fill={true} label="Export" />
         </Box>
         <ThreeRenderer
           palette={pico8Palette}
