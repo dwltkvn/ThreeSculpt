@@ -74,10 +74,22 @@ class App extends React.Component {
   }
 
   handleChangeColorClick() {
-    this.setState({ currentPaletteIndex: 3 });
+    console.log(`${pico8Palette[3].toString(16)}`);
+    this.setState(prevState => ({
+      currentPaletteIndex:
+        (prevState.currentPaletteIndex + 1) % pico8Palette.length
+    }));
   }
 
   render() {
+    const c = pico8Palette[this.state.currentPaletteIndex]
+      .toString(16)
+      .padStart(6, "0");
+
+    const syncButtonStyle = {
+      backgroundColor: `#${c}`
+    };
+
     return (
       <div className="App" style={divStyle}>
         <Box
@@ -93,6 +105,7 @@ class App extends React.Component {
             onClick={() => this.handleSculptClick()}
           />
           <Button
+            style={syncButtonStyle}
             icon={<SyncIcon />}
             onClick={() => this.handleChangeColorClick()}
           />
@@ -101,6 +114,7 @@ class App extends React.Component {
             label="(C)olorize"
             onClick={() => this.handleColorizeClick()}
           />
+          <Button fill={true} label="Export" />
         </Box>
         <ThreeRenderer
           palette={pico8Palette}
