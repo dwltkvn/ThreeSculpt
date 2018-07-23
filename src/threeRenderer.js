@@ -3,11 +3,11 @@ import * as THREE from "three";
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 const canvasStyle = {
-  flex: 0.5,
+  flex: 1,
   height: "50%",
   border: "blue",
   borderStyle: "solid",
-  borderWidth: "5px"
+  borderWidth: "1px"
 };
 
 class ThreeRenderer extends React.Component {
@@ -23,11 +23,8 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
-    const container = document.getElementById("threejsContainer");
     //const width = this.div.width; //window.innerWidth;
     //const height = this.div.height; //window.innerHeight;
-
-    console.log(this.div);
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -58,7 +55,7 @@ class ThreeRenderer extends React.Component {
       1000
     ));
     */
-    camera.position.z = 2;
+    camera.position.z = 25;
 
     const controls = (this.controls = new OrbitControls(this.camera));
 
@@ -102,6 +99,9 @@ class ThreeRenderer extends React.Component {
     };
     animate();
 
+    const obj = this.getIntersectedObject();
+    if (obj) obj.material = this.selectedMaterial;
+
     this.onResize();
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
@@ -136,8 +136,6 @@ class ThreeRenderer extends React.Component {
       x = e.clientX;
       y = e.clientY;
     }
-
-    console.log(x);
 
     this.mouse.x = (x / this.canvas.width) * 2 - 1;
     this.mouse.y = -(y / this.canvas.height) * 2 + 1;
