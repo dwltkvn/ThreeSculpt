@@ -182,6 +182,9 @@ class ThreeRenderer extends React.Component {
     const obj = this.getIntersectedObject();
     if (obj) {
       obj.visible = false;
+      // when the cube has been removed, evaluated the next selected cube
+      const nextObj = this.getIntersectedObject();
+      if (nextObj) nextObj.material = this.selectedMaterial;
     }
   }
 

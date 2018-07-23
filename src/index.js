@@ -18,13 +18,18 @@ const divStyle = {
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    if (this.threeRendererRef) this.threeRendererRef.sculpt();
   }
 
   render() {
     return (
       <div className="App" style={divStyle}>
-        <ThreeRenderer />
-        <Button label="Sculpt" />
+        <ThreeRenderer ref={el => (this.threeRendererRef = el)} />
+        <Button label="Sculpt" onClick={() => this.handleClick()} />
       </div>
     );
   }
