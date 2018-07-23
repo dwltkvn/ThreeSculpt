@@ -21,8 +21,6 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
-    //const width = this.div.width; //window.innerWidth;
-    //const height = this.div.height; //window.innerHeight;
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -87,7 +85,7 @@ class ThreeRenderer extends React.Component {
     animate();
 
     const obj = this.getIntersectedObject();
-    if (obj) obj.material = this.selectedMaterial;
+    this.highlightSelectedObject(obj);
 
     this.onResize();
     window.addEventListener("resize", this.onResize);
@@ -110,27 +108,27 @@ class ThreeRenderer extends React.Component {
 
   onTouchMove(e) {
     const obj = this.getIntersectedObject();
-    if (obj) {
-      if (this.prevSelectedObj && obj !== this.prevSelectedObj) {
-        this.prevSelectedObj.material = this.nonSelectedMaterial;
-      }
-      obj.material = this.selectedMaterial;
-      //obj.material.color.setRGB(64, 64, 64); --> doesn't work ; it will change the material, which is shared by all cubes
-      this.prevSelectedObj = obj;
+    this.highlightSelectedObject(obj);
+
+    // if current obj isn't the same as the previous selected obj, then un-highlight it
+    if (this.prevSelectedObj && obj !== this.prevSelectedObj) {
+      this.prevSelectedObj.material = this.nonSelectedMaterial;
     }
+    this.prevSelectedObj = obj;
   }
 
   getIntersectedObject() {
     this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
 
     const intersects = this.raycaster.intersectObjects([this.scene], true);
+    if (intersects.length <= 0) return null;
 
-    if (intersects.length > 0) {
-      const selectedObject = intersects[0].object;
-      return selectedObject;
-    } else {
-      return null;
-    }
+    const selectedObject = intersects[0].object;
+    return selectedObject;
+  }
+
+  highlightSelectedObject(obj) {
+    if (obj) obj.material = this.selectedMaterial;
   }
 
   sculpt() {
@@ -139,7 +137,7 @@ class ThreeRenderer extends React.Component {
       obj.visible = false;
       // when the cube has been removed, evaluated the next selected cube
       const nextObj = this.getIntersectedObject();
-      if (nextObj) nextObj.material = this.selectedMaterial;
+      this.highlightSelectedObject(nextObj);
     }
   }
 
