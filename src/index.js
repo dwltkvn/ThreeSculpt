@@ -18,7 +18,7 @@ import RevertIcon from "grommet/components/icons/base/Revert";
 const divStyle = {
   border: "red",
   borderStyle: "solid",
-  borderWidth: "1px",
+  borderWidth: "0px",
   flexDirection: "column",
   flex: 1,
   display: "flex"

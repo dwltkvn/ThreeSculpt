@@ -7,7 +7,7 @@ const canvasStyle = {
   height: "50%",
   border: "blue",
   borderStyle: "solid",
-  borderWidth: "1px"
+  borderWidth: "0px"
 };
 
 class ThreeRenderer extends React.Component {
