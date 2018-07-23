@@ -178,6 +178,13 @@ class ThreeRenderer extends React.Component {
     }
   }
 
+  sculpt() {
+    const obj = this.getIntersectedObject();
+    if (obj) {
+      obj.visible = false;
+    }
+  }
+
   storeRef = node => {
     this.canvas = node;
   };

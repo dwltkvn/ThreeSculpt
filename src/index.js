@@ -14,13 +14,20 @@ const divStyle = {
   flex: 1,
   display: "flex"
 };
-function App() {
-  return (
-    <div className="App" style={divStyle}>
-      <ThreeRenderer />
-      <Button label="Sculpt" />
-    </div>
-  );
+
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className="App" style={divStyle}>
+        <ThreeRenderer />
+        <Button label="Sculpt" />
+      </div>
+    );
+  }
 }
 
 const rootElement = document.getElementById("root");
