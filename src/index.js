@@ -6,6 +6,9 @@ import ThreeRenderer from "./threeRenderer";
 
 import Button from "grommet/components/Button";
 import Box from "grommet/components/Box";
+
+import Responsive from "grommet/utils/Responsive";
+
 import SyncIcon from "grommet/components/icons/base/Sync";
 import EditIcon from "grommet/components/icons/base/Edit";
 import TroisDIcon from "grommet/components/icons/base/3d";
@@ -50,14 +53,21 @@ class App extends React.Component {
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
     this.handleChangeColorClick = this.handleChangeColorClick.bind(this);
     this.handleKey = this.handleKey.bind(this);
+    this._onResponsive = this._onResponsive.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("keydown", this.handleKey);
+    this._responsive = Responsive.start(this._onResponsive);
   }
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKey);
+    this._responsive.stop();
+  }
+
+  _onResponsive(small) {
+    this.setState({ small });
   }
 
   handleKey(e) {
@@ -100,20 +110,20 @@ class App extends React.Component {
           full="horizontal"
           direction="row"
           separator="all"
-          justify="center"
+          justify="between"
           responsive={false}
         >
           <Button
             icon={<TroisDIcon />}
-            fill={true}
-            label="(S)culpt"
+            fill={!this.state.small}
+            label={this.state.small ? null : "(S)culpt"}
             onClick={() => this.handleSculptClick()}
           />
           <Button icon={<RevertIcon />} />
           <Button
-            fill={true}
+            fill={!this.state.small}
             icon={<EditIcon />}
-            label="(C)olorize"
+            label={this.state.small ? null : "(C)olorize"}
             onClick={() => this.handleColorizeClick()}
           />
           <Button
@@ -121,7 +131,11 @@ class App extends React.Component {
             icon={<SyncIcon />}
             onClick={() => this.handleChangeColorClick()}
           />
-          <Button icon={<DownloadIcon />} fill={true} label="Export" />
+          <Button
+            icon={<DownloadIcon />}
+            fill={!this.state.small}
+            label={this.state.small ? null : "Export"}
+          />
         </Box>
         <ThreeRenderer
           palette={pico8Palette}
