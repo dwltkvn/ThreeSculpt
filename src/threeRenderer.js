@@ -112,7 +112,7 @@ class ThreeRenderer extends React.Component {
 
     // if current obj isn't the same as the previous selected obj, then un-highlight it
     if (this.prevSelectedObj && obj !== this.prevSelectedObj) {
-      this.prevSelectedObj.material = this.nonSelectedMaterial;
+      this.highlightSelectedObject(this.prevSelectedObj, false);
     }
     this.prevSelectedObj = obj;
   }
@@ -127,8 +127,11 @@ class ThreeRenderer extends React.Component {
     return selectedObject;
   }
 
-  highlightSelectedObject(obj) {
-    if (obj) obj.material = this.selectedMaterial;
+  highlightSelectedObject(obj, highlight = true) {
+    if (obj) {
+      if (highlight) obj.material = this.selectedMaterial;
+      else obj.material = this.nonSelectedMaterial;
+    }
   }
 
   sculpt() {
