@@ -2,6 +2,14 @@ import React from "react";
 import * as THREE from "three";
 const OrbitControls = require("three-orbit-controls")(THREE);
 
+const canvasStyle = {
+  flex: 0.5,
+  height: "50%",
+  border: "blue",
+  borderStyle: "solid",
+  borderWidth: "5px"
+};
+
 class ThreeRenderer extends React.Component {
   constructor(props) {
     super(props);
@@ -15,9 +23,11 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
+    const container = document.getElementById("threejsContainer");
+    //const width = this.div.width; //window.innerWidth;
+    //const height = this.div.height; //window.innerHeight;
 
+    console.log(this.div);
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -26,12 +36,15 @@ class ThreeRenderer extends React.Component {
     const renderer = (this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas
     }));
-    renderer.setSize(width, height);
+    //this.canvas.width = this.canvas.clientWidth;
+    //this.canvas.height = this.canvas.clientHeight;
+    //renderer.setSize(width, height);
+    renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
     renderer.setClearColor(0xffffff, 1.0);
 
     const camera = (this.camera = new THREE.PerspectiveCamera(
       35,
-      width / height,
+      this.canvas.clientWidth / this.canvas.clientHeight,
       0.1,
       1000
     ));
@@ -92,24 +105,25 @@ class ThreeRenderer extends React.Component {
     this.onResize();
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
-    window.addEventListener("touchmove", this.onTouchMove);
+    this.canvas.addEventListener("touchmove", this.onTouchMove);
     window.addEventListener("click", this.onClick);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.onResize);
     window.removeEventListener("mousemove", this.onTouchMove);
-    window.removeEventListener("touchmove", this.onTouchMove);
+    this.canvas.removeEventListener("touchmove", this.onTouchMove);
     window.removeEventListener("click", this.onClick);
     this.renderer.dispose();
   }
 
   onResize(e) {
-    console.log(e);
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    return;
+    this.camera.aspect = this.div.width / this.div.height; //window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    //this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(this.div.width, this.div.height);
   }
 
   onTouchMove(e) {
@@ -123,8 +137,10 @@ class ThreeRenderer extends React.Component {
       y = e.clientY;
     }
 
-    this.mouse.x = (x / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(y / window.innerHeight) * 2 + 1;
+    console.log(x);
+
+    this.mouse.x = (x / this.canvas.width) * 2 - 1;
+    this.mouse.y = -(y / this.canvas.height) * 2 + 1;
 
     const obj = this.getIntersectedObject();
     if (obj) {
@@ -138,6 +154,7 @@ class ThreeRenderer extends React.Component {
   }
 
   onClick(e) {
+    return;
     const x = e.clientX;
     const y = e.clientY;
 
@@ -151,7 +168,7 @@ class ThreeRenderer extends React.Component {
   }
 
   getIntersectedObject() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
 
     const intersects = this.raycaster.intersectObjects([this.scene], true);
 
@@ -168,7 +185,7 @@ class ThreeRenderer extends React.Component {
   };
 
   render() {
-    return <canvas id="three" ref={this.storeRef} />;
+    return <canvas id="three" ref={this.storeRef} style={canvasStyle} />;
   }
 }
 
