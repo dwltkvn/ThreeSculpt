@@ -18,6 +18,7 @@ class ThreeRenderer extends React.Component {
     this.onTouchMove = this.onTouchMove.bind(this);
     this.getIntersectedObject = this.getIntersectedObject.bind(this);
     this.prevSelectedObj = null;
+    this.colorMaterial = [];
   }
 
   componentDidMount() {
@@ -56,7 +57,9 @@ class ThreeRenderer extends React.Component {
       color: 0xffffff
     });
 
-    this.colorMaterial = new THREE.MeshLambertMaterial({ color: 0x0000ff });
+    this.props.palette.forEach((c, idx) => {
+      this.colorMaterial.push(new THREE.MeshLambertMaterial({ color: c }));
+    });
 
     const cubes = new THREE.Mesh(geometry, material);
 
@@ -151,7 +154,7 @@ class ThreeRenderer extends React.Component {
   colorize() {
     const obj = this.getIntersectedObject();
     if (obj) {
-      obj.currentColorMaterial = this.colorMaterial;
+      obj.currentColorMaterial = this.colorMaterial[this.props.paletteIndex];
     }
   }
 
