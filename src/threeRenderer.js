@@ -16,9 +16,7 @@ class ThreeRenderer extends React.Component {
     this.state = {};
     this.onResize = this.onResize.bind(this);
     this.onTouchMove = this.onTouchMove.bind(this);
-    this.onClick = this.onClick.bind(this);
     this.getIntersectedObject = this.getIntersectedObject.bind(this);
-    this.mouse = { x: 0, y: 0 };
     this.prevSelectedObj = null;
   }
 
@@ -33,9 +31,7 @@ class ThreeRenderer extends React.Component {
     const renderer = (this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas
     }));
-    //this.canvas.width = this.canvas.clientWidth;
-    //this.canvas.height = this.canvas.clientHeight;
-    //renderer.setSize(width, height);
+
     renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
     renderer.setClearColor(0xffffff, 1.0);
 
@@ -45,16 +41,7 @@ class ThreeRenderer extends React.Component {
       0.1,
       1000
     ));
-    /*
-    const camera = (this.camera = new THREE.OrthographicCamera(
-      width / -2,
-      width / 2,
-      height / 2,
-      height / -2,
-      1,
-      1000
-    ));
-    */
+
     camera.position.z = 25;
 
     const controls = (this.controls = new OrbitControls(this.camera));
@@ -105,41 +92,23 @@ class ThreeRenderer extends React.Component {
     this.onResize();
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
-    this.canvas.addEventListener("touchmove", this.onTouchMove);
-    window.addEventListener("click", this.onClick);
+    window.addEventListener("touchmove", this.onTouchMove);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.onResize);
     window.removeEventListener("mousemove", this.onTouchMove);
-    this.canvas.removeEventListener("touchmove", this.onTouchMove);
-    window.removeEventListener("click", this.onClick);
+    window.removeEventListener("touchmove", this.onTouchMove);
     this.renderer.dispose();
   }
 
   onResize(e) {
-    return;
-    this.camera.aspect = this.div.width / this.div.height; //window.innerWidth / window.innerHeight;
+    this.renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
+    this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     this.camera.updateProjectionMatrix();
-
-    //this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setSize(this.div.width, this.div.height);
   }
 
   onTouchMove(e) {
-    let x, y;
-
-    if (e.changedTouches) {
-      x = e.changedTouches[0].pageX;
-      y = e.changedTouches[0].pageY;
-    } else {
-      x = e.clientX;
-      y = e.clientY;
-    }
-
-    this.mouse.x = (x / this.canvas.width) * 2 - 1;
-    this.mouse.y = -(y / this.canvas.height) * 2 + 1;
-
     const obj = this.getIntersectedObject();
     if (obj) {
       if (this.prevSelectedObj && obj !== this.prevSelectedObj) {
@@ -148,20 +117,6 @@ class ThreeRenderer extends React.Component {
       obj.material = this.selectedMaterial;
       //obj.material.color.setRGB(64, 64, 64); --> doesn't work ; it will change the material, which is shared by all cubes
       this.prevSelectedObj = obj;
-    }
-  }
-
-  onClick(e) {
-    return;
-    const x = e.clientX;
-    const y = e.clientY;
-
-    this.mouse.x = (x / window.innerWidth) * 2 - 1;
-    this.mouse.y = -(y / window.innerHeight) * 2 + 1;
-
-    const obj = this.getIntersectedObject();
-    if (obj) {
-      obj.visible = false;
     }
   }
 
@@ -188,12 +143,10 @@ class ThreeRenderer extends React.Component {
     }
   }
 
-  storeRef = node => {
-    this.canvas = node;
-  };
-
   render() {
-    return <canvas id="three" ref={this.storeRef} style={canvasStyle} />;
+    return (
+      <canvas id="three" ref={el => (this.canvas = el)} style={canvasStyle} />
+    );
   }
 }
 
