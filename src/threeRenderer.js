@@ -70,8 +70,12 @@ class ThreeRenderer extends React.Component {
     });
 
     const light_p = new THREE.PointLight(0xffffff);
-    light_p.position.set(100, 100, 100);
+    light_p.position.set(10, 10, 10);
     scene.add(light_p);
+
+    const light_p2 = new THREE.PointLight(0xffffff);
+    light_p2.position.set(-10, -10, -10);
+    scene.add(light_p2);
 
     const light_a = new THREE.AmbientLight(0x333333);
     scene.add(light_a);

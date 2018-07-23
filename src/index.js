@@ -19,6 +19,22 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+    this.handleKey = this.handleKey.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener("keydown", this.handleKey);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keydown", this.handleKey);
+  }
+
+  handleKey(e) {
+    const keyCode = e.which;
+    if (keyCode == 83) {
+      if (this.threeRendererRef) this.threeRendererRef.sculpt();
+    }
   }
 
   handleClick() {
@@ -29,7 +45,7 @@ class App extends React.Component {
     return (
       <div className="App" style={divStyle}>
         <ThreeRenderer ref={el => (this.threeRendererRef = el)} />
-        <Button label="Sculpt" onClick={() => this.handleClick()} />
+        <Button label="(S)culpt" onClick={() => this.handleClick()} />
       </div>
     );
   }
