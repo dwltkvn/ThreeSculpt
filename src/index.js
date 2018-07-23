@@ -32,7 +32,7 @@ class App extends React.Component {
 
   handleKey(e) {
     const keyCode = e.which;
-    if (keyCode == 83) {
+    if (keyCode === 83) {
       if (this.threeRendererRef) this.threeRendererRef.sculpt();
     }
   }
