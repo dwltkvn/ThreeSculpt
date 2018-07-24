@@ -20,7 +20,7 @@ const divStyle = {
   borderStyle: "solid",
   borderWidth: "0px",
   flexDirection: "column",
-  flex: 1,
+  flex: 1.0,
   display: "flex"
 };
 
@@ -107,7 +107,6 @@ class App extends React.Component {
     return (
       <div className="App" style={divStyle}>
         <Box
-          full="horizontal"
           direction="row"
           separator="all"
           justify="between"
@@ -121,8 +120,8 @@ class App extends React.Component {
           />
           <Button icon={<RevertIcon />} />
           <Button
-            fill={!this.state.small}
             icon={<EditIcon />}
+            fill={!this.state.small}
             label={this.state.small ? null : "(C)olorize"}
             onClick={() => this.handleColorizeClick()}
           />

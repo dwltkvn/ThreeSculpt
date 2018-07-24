@@ -3,8 +3,9 @@ import * as THREE from "three";
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 const canvasStyle = {
-  flex: 1,
-  height: "50%",
+  flex: 1.0,
+  //height: "50%",
+  //width:"100%",
   border: "blue",
   borderStyle: "solid",
   borderWidth: "0px"
