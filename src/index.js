@@ -5,9 +5,6 @@ import ReactDOM from "react-dom";
 import ThreeRenderer from "./threeRenderer";
 
 import Button from "grommet/components/Button";
-import Box from "grommet/components/Box";
-import Header from "grommet/components/Header";
-
 import Responsive from "grommet/utils/Responsive";
 
 import SyncIcon from "grommet/components/icons/base/Sync";
@@ -23,11 +20,6 @@ const divStyle = {
   flexDirection: "column",
   flex: 1.0,
   display: "flex"
-};
-
-const headerDivStyle = {
-  display: "flex",
-  content: "center"
 };
 
 const pico8Palette = [
@@ -72,10 +64,12 @@ class App extends React.Component {
     this._responsive.stop();
   }
 
+  // callback used to determine if current screen display is small or large.
   _onResponsive(small) {
     this.setState({ small });
   }
 
+  // Keyboard shortcut to sculpt/colorize without having to used action buttons.
   handleKey(e) {
     const keyCode = e.which;
     if (keyCode === 83) {
@@ -85,14 +79,17 @@ class App extends React.Component {
     }
   }
 
+  // call the ThreeRenderer sculpt() function.
   handleSculptClick() {
     if (this.threeRendererRef) this.threeRendererRef.sculpt();
   }
 
+  // call the ThreeRenderer colorize() function.
   handleColorizeClick() {
     if (this.threeRendererRef) this.threeRendererRef.colorize();
   }
 
+  // change the current color ; increase the current index or cycle back to 0.
   handleChangeColorClick() {
     this.setState(prevState => ({
       currentPaletteIndex:
@@ -101,10 +98,12 @@ class App extends React.Component {
   }
 
   render() {
+    // convert current color value to hex string format + padded up to 6 characters (filled with '0').
     const c = pico8Palette[this.state.currentPaletteIndex]
       .toString(16)
       .padStart(6, "0");
 
+    // button used to change color is displayed with a beackground of the current color.
     const syncButtonStyle = {
       backgroundColor: `#${c}`
     };
@@ -112,31 +111,40 @@ class App extends React.Component {
     return (
       <div className="App" style={divStyle}>
         <div className="headerDivStyle">
+          {/* Scultp button, callback to handleSculptClick(), doesn't display its text if on small screen */}
           <Button
             icon={<TroisDIcon />}
             label={this.state.small ? null : "(S)culpt"}
             onClick={() => this.handleSculptClick()}
           />
+          {/* Not used yet */}
           <Button icon={<RevertIcon />} />
+          {/* Apply color button, callback to handleColorizeClick(), doesn't display its text if on small screen */}
           <Button
             icon={<EditIcon />}
             label={this.state.small ? null : "(C)olorize"}
             onClick={() => this.handleColorizeClick()}
           />
+          {/* Change current color */}
           <Button
             style={syncButtonStyle}
             icon={<SyncIcon />}
             onClick={() => this.handleChangeColorClick()}
           />
+          {/* Not used yet */}
           <Button
             icon={<DownloadIcon />}
             label={this.state.small ? null : "Export"}
           />
         </div>
+        {/* The 3D view display
+            - props palette contain an array of available colors
+            - props paletteIndex contain current selected color index
+            - ref is used to expose sculpt() and colorize() functions, which can be invoked by action buttons.
+        */}
         <ThreeRenderer
           palette={pico8Palette}
           paletteIndex={this.state.currentPaletteIndex}
-          isSmall={true}
           ref={el => (this.threeRendererRef = el)}
         />
       </div>
