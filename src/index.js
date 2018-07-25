@@ -1,11 +1,12 @@
 import "../node_modules/grommet-css";
-
+import "./style.css";
 import React from "react";
 import ReactDOM from "react-dom";
 import ThreeRenderer from "./threeRenderer";
 
 import Button from "grommet/components/Button";
 import Box from "grommet/components/Box";
+import Header from "grommet/components/Header";
 
 import Responsive from "grommet/utils/Responsive";
 
@@ -22,6 +23,11 @@ const divStyle = {
   flexDirection: "column",
   flex: 1.0,
   display: "flex"
+};
+
+const headerDivStyle = {
+  display: "flex",
+  content: "center"
 };
 
 const pico8Palette = [
@@ -47,7 +53,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPaletteIndex: 0
+      currentPaletteIndex: 0,
+      notRenderedYet: true
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
@@ -59,6 +66,7 @@ class App extends React.Component {
   componentDidMount() {
     window.addEventListener("keydown", this.handleKey);
     this._responsive = Responsive.start(this._onResponsive);
+    this.setState({ notRenderedYet: false });
   }
 
   componentWillUnmount() {
@@ -106,22 +114,15 @@ class App extends React.Component {
 
     return (
       <div className="App" style={divStyle}>
-        <Box
-          direction="row"
-          separator="all"
-          justify="between"
-          responsive={false}
-        >
+        <div className="headerDivStyle">
           <Button
             icon={<TroisDIcon />}
-            fill={!this.state.small}
             label={this.state.small ? null : "(S)culpt"}
             onClick={() => this.handleSculptClick()}
           />
           <Button icon={<RevertIcon />} />
           <Button
             icon={<EditIcon />}
-            fill={!this.state.small}
             label={this.state.small ? null : "(C)olorize"}
             onClick={() => this.handleColorizeClick()}
           />
@@ -132,15 +133,17 @@ class App extends React.Component {
           />
           <Button
             icon={<DownloadIcon />}
-            fill={!this.state.small}
             label={this.state.small ? null : "Export"}
           />
-        </Box>
-        <ThreeRenderer
-          palette={pico8Palette}
-          paletteIndex={this.state.currentPaletteIndex}
-          ref={el => (this.threeRendererRef = el)}
-        />
+        </div>
+        {this.state.notRenderedYet ? null : (
+          <ThreeRenderer
+            palette={pico8Palette}
+            paletteIndex={this.state.currentPaletteIndex}
+            isSmall={true}
+            ref={el => (this.threeRendererRef = el)}
+          />
+        )}
       </div>
     );
   }

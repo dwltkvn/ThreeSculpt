@@ -28,6 +28,13 @@ class ThreeRenderer extends React.Component {
     const scene = (this.scene = new THREE.Scene());
     scene.background = new THREE.Color(0x222222);
 
+    console.log(this.canvas.width);
+    console.log(this.canvas.clientWidth);
+    console.log(this.canvas.clientWidth + 80);
+    console.log(this.canvas.offsetWidth);
+    console.log(window.document.body.clientWidth);
+    console.log(this.props.isSmall);
+
     this.canvas.width = this.canvas.clientWidth;
     this.canvas.height = this.canvas.clientHeight;
 
@@ -41,6 +48,7 @@ class ThreeRenderer extends React.Component {
     const camera = (this.camera = new THREE.PerspectiveCamera(
       35,
       this.canvas.clientWidth / this.canvas.clientHeight,
+      //this.canvas.width / this.canvas.height,
       0.1,
       1000
     ));
@@ -101,7 +109,7 @@ class ThreeRenderer extends React.Component {
     const obj = this.getIntersectedObject();
     this.highlightSelectedObject(obj);
 
-    //this.onResize();
+    this.onResize();
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
     window.addEventListener("touchmove", this.onTouchMove, true);
@@ -115,8 +123,8 @@ class ThreeRenderer extends React.Component {
   }
 
   onResize(e) {
-    //this.canvas.width = this.canvas.clientWidth;
-    //this.canvas.height = this.canvas.clientHeight;
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
     this.renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
     this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
     this.camera.updateProjectionMatrix();
@@ -171,7 +179,12 @@ class ThreeRenderer extends React.Component {
 
   render() {
     return (
-      <canvas id="three" ref={el => (this.canvas = el)} style={canvasStyle} />
+      <canvas
+        id="three"
+        ref={el => (this.canvas = el)}
+        style={canvasStyle}
+        width="0"
+      />
     );
   }
 }
