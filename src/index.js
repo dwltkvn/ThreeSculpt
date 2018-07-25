@@ -53,8 +53,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPaletteIndex: 0,
-      notRenderedYet: true
+      currentPaletteIndex: 0
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
@@ -66,7 +65,6 @@ class App extends React.Component {
   componentDidMount() {
     window.addEventListener("keydown", this.handleKey);
     this._responsive = Responsive.start(this._onResponsive);
-    this.setState({ notRenderedYet: false });
   }
 
   componentWillUnmount() {
@@ -96,7 +94,6 @@ class App extends React.Component {
   }
 
   handleChangeColorClick() {
-    console.log(`${pico8Palette[3].toString(16)}`);
     this.setState(prevState => ({
       currentPaletteIndex:
         (prevState.currentPaletteIndex + 1) % pico8Palette.length
@@ -136,14 +133,12 @@ class App extends React.Component {
             label={this.state.small ? null : "Export"}
           />
         </div>
-        {this.state.notRenderedYet ? null : (
-          <ThreeRenderer
-            palette={pico8Palette}
-            paletteIndex={this.state.currentPaletteIndex}
-            isSmall={true}
-            ref={el => (this.threeRendererRef = el)}
-          />
-        )}
+        <ThreeRenderer
+          palette={pico8Palette}
+          paletteIndex={this.state.currentPaletteIndex}
+          isSmall={true}
+          ref={el => (this.threeRendererRef = el)}
+        />
       </div>
     );
   }
