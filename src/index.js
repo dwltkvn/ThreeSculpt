@@ -18,7 +18,7 @@ const divStyle = {
   borderStyle: "solid",
   borderWidth: "0px",
   flexDirection: "column",
-  flex: 1.0,
+  flex: 1,
   display: "flex"
 };
 
