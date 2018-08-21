@@ -29,7 +29,7 @@ class ThreeRenderer extends React.Component {
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
-    scene.background = new THREE.Color(0x222222);
+    scene.background = new THREE.Color(0x555555);
 
     // change canvas size to match the canvas client size (which can be changed via CSS, FlexBox, ...).
     this.canvas.width = this.canvas.clientWidth;
@@ -77,7 +77,7 @@ class ThreeRenderer extends React.Component {
     const cubes = new THREE.Mesh(geometry, material);
 
     // create a big cube composed of 9 x 9 x 9 cubes.
-    const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    const voxelArray = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
     voxelArray.forEach(x => {
       voxelArray.forEach(y => {
         voxelArray.forEach(z => {
