@@ -78,7 +78,7 @@ class ThreeRenderer extends React.Component {
     const cubes = new THREE.Mesh(geometry, material);
 
     // create a big cube composed of 9 x 9 x 9 cubes.
-    const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    const voxelArray = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
     voxelArray.forEach(x => {
       voxelArray.forEach(y => {
         voxelArray.forEach(z => {
@@ -204,6 +204,7 @@ class ThreeRenderer extends React.Component {
       };
       this.undoActionArray.push(undoObj);
       this.props.cbUndoAvailable(true); // tell the parent that undo action are available
+
       // when the cube has been removed, evaluated the next selected cube
       const nextObj = this.getIntersectedObject();
       this.highlightSelectedObject(nextObj);
@@ -227,6 +228,7 @@ class ThreeRenderer extends React.Component {
     if (obj) obj.material = obj.currentColorMaterial;
 
     // actually undo
+
     if (lastObj) {
       lastObj.visible = true;
       lastObj.material = lastObj.currentColorMaterial;

@@ -124,6 +124,7 @@ class App extends React.Component {
             onClick={() => this.handleSculptClick()}
           />
           {/* Not used yet */}
+
           {this.state.stateUndoAvailable ? (
             <Button
               icon={<RevertIcon />}
