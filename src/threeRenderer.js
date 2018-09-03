@@ -23,13 +23,14 @@ class ThreeRenderer extends React.Component {
 
     this.prevSelectedObj = null;
     this.colorMaterial = [];
+    this.undoActionArray = [];
   }
 
   componentDidMount() {
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
-    scene.background = new THREE.Color(0x222222);
+    scene.background = new THREE.Color(0x555555);
 
     // change canvas size to match the canvas client size (which can be changed via CSS, FlexBox, ...).
     this.canvas.width = this.canvas.clientWidth;
@@ -188,10 +189,27 @@ class ThreeRenderer extends React.Component {
     const obj = this.getIntersectedObject();
     if (obj) {
       obj.visible = false;
+      obj.material = obj.currentColorMaterial;
+      this.undoActionArray.push(obj);
       // when the cube has been removed, evaluated the next selected cube
       const nextObj = this.getIntersectedObject();
       this.highlightSelectedObject(nextObj);
     }
+  }
+
+  undo() {
+    const obj = this.getIntersectedObject();
+    if (obj) obj.material = obj.currentColorMaterial;
+
+    const lastObj = this.undoActionArray.pop();
+    if (lastObj) {
+      lastObj.visible = true;
+      lastObj.material = lastObj.currentColorMaterial;
+    }
+
+    // when the cube has been added, evaluated the next selected cube
+    const nextObj = this.getIntersectedObject();
+    this.highlightSelectedObject(nextObj);
   }
 
   render() {
