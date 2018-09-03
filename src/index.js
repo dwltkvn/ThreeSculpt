@@ -45,7 +45,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPaletteIndex: 0
+      currentPaletteIndex: 0,
+      stateUndoAvailable: false
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
@@ -123,10 +124,15 @@ class App extends React.Component {
             onClick={() => this.handleSculptClick()}
           />
           {/* Not used yet */}
-          <Button
-            icon={<RevertIcon />}
-            onClick={() => this.handleUndoClick()}
-          />
+
+          {this.state.stateUndoAvailable ? (
+            <Button
+              icon={<RevertIcon />}
+              onClick={() => this.handleUndoClick()}
+            />
+          ) : (
+            <Button icon={<RevertIcon />} />
+          )}
 
           {/* Apply color button, callback to handleColorizeClick(), doesn't display its text if on small screen */}
           <Button
@@ -155,6 +161,7 @@ class App extends React.Component {
           palette={pico8Palette}
           paletteIndex={this.state.currentPaletteIndex}
           ref={el => (this.threeRendererRef = el)}
+          cbUndoAvailable={b => this.setState({ stateUndoAvailable: b })}
         />
       </div>
     );
