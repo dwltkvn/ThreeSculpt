@@ -18,7 +18,7 @@ const divStyle = {
   borderStyle: "solid",
   borderWidth: "0px",
   flexDirection: "column",
-  flex: 1.0,
+  flex: 1,
   display: "flex"
 };
 
@@ -45,11 +45,13 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPaletteIndex: 0
+      currentPaletteIndex: 0,
+      stateUndoAvailable: false
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
     this.handleChangeColorClick = this.handleChangeColorClick.bind(this);
+    this.handleUndoClick = this.handleUndoClick.bind(this);
     this.handleKey = this.handleKey.bind(this);
     this._onResponsive = this._onResponsive.bind(this);
   }
@@ -97,6 +99,10 @@ class App extends React.Component {
     }));
   }
 
+  handleUndoClick() {
+    if (this.threeRendererRef) this.threeRendererRef.undo();
+  }
+
   render() {
     // convert current color value to hex string format + padded up to 6 characters (filled with '0').
     const c = pico8Palette[this.state.currentPaletteIndex]
@@ -118,7 +124,15 @@ class App extends React.Component {
             onClick={() => this.handleSculptClick()}
           />
           {/* Not used yet */}
-          <Button icon={<RevertIcon />} />
+          {this.state.stateUndoAvailable ? (
+            <Button
+              icon={<RevertIcon />}
+              onClick={() => this.handleUndoClick()}
+            />
+          ) : (
+            <Button icon={<RevertIcon />} />
+          )}
+
           {/* Apply color button, callback to handleColorizeClick(), doesn't display its text if on small screen */}
           <Button
             icon={<EditIcon />}
@@ -146,6 +160,7 @@ class App extends React.Component {
           palette={pico8Palette}
           paletteIndex={this.state.currentPaletteIndex}
           ref={el => (this.threeRendererRef = el)}
+          cbUndoAvailable={b => this.setState({ stateUndoAvailable: b })}
         />
       </div>
     );

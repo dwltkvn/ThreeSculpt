@@ -23,13 +23,14 @@ class ThreeRenderer extends React.Component {
 
     this.prevSelectedObj = null;
     this.colorMaterial = [];
+    this.undoActionArray = [];
   }
 
   componentDidMount() {
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
-    scene.background = new THREE.Color(0x222222);
+    scene.background = new THREE.Color(0x555555);
 
     // change canvas size to match the canvas client size (which can be changed via CSS, FlexBox, ...).
     this.canvas.width = this.canvas.clientWidth;
@@ -179,7 +180,15 @@ class ThreeRenderer extends React.Component {
   colorize() {
     const obj = this.getIntersectedObject();
     if (obj) {
+      const prevColor = obj.currentColorMaterial;
       obj.currentColorMaterial = this.colorMaterial[this.props.paletteIndex];
+      let undoObj = {
+        target: obj,
+        undo: ThreeRenderer.UndoStates.UNDO_COLOR,
+        color: prevColor
+      };
+      this.undoActionArray.push(undoObj);
+      this.props.cbUndoAvailable(true); // tell the parent that undo action are available
     }
   }
 
@@ -188,15 +197,71 @@ class ThreeRenderer extends React.Component {
     const obj = this.getIntersectedObject();
     if (obj) {
       obj.visible = false;
+      obj.material = obj.currentColorMaterial;
+      let undoObj = {
+        target: obj,
+        undo: ThreeRenderer.UndoStates.UNDO_SCULPT
+      };
+      this.undoActionArray.push(undoObj);
+      this.props.cbUndoAvailable(true); // tell the parent that undo action are available
       // when the cube has been removed, evaluated the next selected cube
       const nextObj = this.getIntersectedObject();
       this.highlightSelectedObject(nextObj);
     }
   }
 
+  undo() {
+    if (this.undoActionArray.length === 0) return;
+
+    const undoObj = this.undoActionArray.pop();
+    if (undoObj.undo === ThreeRenderer.UndoStates.UNDO_SCULPT)
+      this.undoSculpt(undoObj.target);
+    else if (undoObj.undo === ThreeRenderer.UndoStates.UNDO_COLOR)
+      this.undoColorize(undoObj.target, undoObj.color);
+
+    this.props.cbUndoAvailable(this.undoActionArray.length > 0); // tell the parent that undo action are still available
+  }
+
+  undoSculpt(lastObj) {
+    const obj = this.getIntersectedObject();
+    if (obj) obj.material = obj.currentColorMaterial;
+
+    // actually undo
+    if (lastObj) {
+      lastObj.visible = true;
+      lastObj.material = lastObj.currentColorMaterial;
+    }
+
+    // when the cube has been added, evaluated the next selected cube
+    const nextObj = this.getIntersectedObject();
+    this.highlightSelectedObject(nextObj);
+  }
+
+  undoColorize(lastObj, lastColor) {
+    console.log(lastObj);
+    console.log(lastColor);
+    const obj = this.getIntersectedObject();
+    if (obj) obj.material = obj.currentColorMaterial;
+
+    // actually undo
+    if (lastObj) {
+      lastObj.currentColorMaterial = lastColor;
+      lastObj.material = lastColor;
+    }
+
+    // when the cube has been added, evaluated the next selected cube
+    const nextObj = this.getIntersectedObject();
+    this.highlightSelectedObject(nextObj);
+  }
+
   render() {
     return <canvas ref={el => (this.canvas = el)} style={canvasStyle} />;
   }
 }
+
+ThreeRenderer.UndoStates = Object.freeze({
+  UNDO_SCULPT: Symbol("undosculpt"),
+  UNDO_COLOR: Symbol("undocolor")
+});
 
 export default ThreeRenderer;
