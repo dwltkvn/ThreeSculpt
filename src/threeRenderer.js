@@ -2,16 +2,6 @@ import React from "react";
 import * as THREE from "three";
 const OrbitControls = require("three-orbit-controls")(THREE);
 
-// used for debugging when canvas doesn't fit in the screen.
-const canvasStyle = {
-  flex: 1.0,
-  //height: "50%",
-  //width:"100%",
-  border: "blue",
-  borderStyle: "solid",
-  borderWidth: "0px"
-};
-
 class ThreeRenderer extends React.Component {
   constructor(props) {
     super(props);
@@ -24,24 +14,23 @@ class ThreeRenderer extends React.Component {
     this.prevSelectedObj = null;
     this.colorMaterial = [];
     this.undoActionArray = [];
+    this.intersectableObjects = [];
   }
 
   componentDidMount() {
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
-    scene.background = new THREE.Color(0x555555);
-
-    // change canvas size to match the canvas client size (which can be changed via CSS, FlexBox, ...).
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
+    scene.background = new THREE.Color(0xf0f0f0);
 
     // RENDERER creation and configuration
     const renderer = (this.renderer = new THREE.WebGLRenderer({
-      canvas: this.canvas
+      canvas: this.canvas,
+      antialias: true
     }));
-    renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
     renderer.setClearColor(0xffffff, 1.0);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
     // CAMERA creation and configuraiton
     const camera = (this.camera = new THREE.PerspectiveCamera(
@@ -57,8 +46,13 @@ class ThreeRenderer extends React.Component {
     // add Orital Controler
     const controls = (this.controls = new OrbitControls(this.camera));
 
+    const gridHelper = new THREE.GridHelper(50, 50);
+    gridHelper.position.y = -4;
+    scene.add(gridHelper);
+
     // GEOMETRY - Create our only geometry: a cube.
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    //const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
 
     // MATERIAL - create the default material (red cube) and selected material (white cube) + create a material for each color of the palette passed via props.
     const material = (this.nonSelectedMaterial = new THREE.MeshLambertMaterial({
@@ -75,17 +69,19 @@ class ThreeRenderer extends React.Component {
     });
 
     // MESH - create the model cube that will be cloned to create its others siblings
-    const cubes = new THREE.Mesh(geometry, material);
+    //const cubes = new THREE.Mesh(geometry, material);
 
     // create a big cube composed of 9 x 9 x 9 cubes.
-    const voxelArray = [-7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
+    const voxelArray = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+    //const voxelArray = [0];
     voxelArray.forEach(x => {
       voxelArray.forEach(y => {
         voxelArray.forEach(z => {
-          const cube = cubes.clone();
+          const cube = new THREE.Mesh(geometry, material); //cubes.clone();
           cube.position.set(x, y, z);
           cube.currentColorMaterial = this.nonSelectedMaterial; // additionnal field, which is used to store the current color material.
           scene.add(cube);
+          this.intersectableObjects.push(cube);
         });
       });
     });
@@ -118,9 +114,6 @@ class ThreeRenderer extends React.Component {
     // Highlight the cube which is in camera line view.
     const obj = this.getIntersectedObject();
     this.highlightSelectedObject(obj);
-
-    // Call resize, just in case ?
-    this.onResize();
 
     // EVENT LISTENER - connect event to their respective slots.
     window.addEventListener("resize", this.onResize);
@@ -158,7 +151,11 @@ class ThreeRenderer extends React.Component {
   getIntersectedObject() {
     this.raycaster.setFromCamera({ x: 0, y: 0 }, this.camera);
 
-    const intersects = this.raycaster.intersectObjects([this.scene], true);
+    //const intersects = this.raycaster.intersectObjects([this.scene], true);
+    const intersects = this.raycaster.intersectObjects(
+      this.intersectableObjects,
+      true
+    );
     if (intersects.length <= 0) return null;
 
     const selectedObject = intersects[0].object;
@@ -256,7 +253,7 @@ class ThreeRenderer extends React.Component {
   }
 
   render() {
-    return <canvas ref={el => (this.canvas = el)} style={canvasStyle} />;
+    return <canvas ref={el => (this.canvas = el)} />;
   }
 }
 
