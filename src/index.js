@@ -55,10 +55,16 @@ class App extends React.Component {
   // Keyboard shortcut to sculpt/colorize without having to used action buttons.
   handleKey(e) {
     const keyCode = e.which;
+    //console.log(keyCode);
     if (keyCode === 83) {
+      // S
       if (this.threeRendererRef) this.threeRendererRef.sculpt();
     } else if (keyCode === 67) {
+      // C
       if (this.threeRendererRef) this.threeRendererRef.colorize();
+    } else if (keyCode === 85) {
+      // U
+      if (this.threeRendererRef) this.threeRendererRef.undo();
     }
   }
 
