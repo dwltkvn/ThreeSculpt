@@ -46,13 +46,13 @@ class ThreeRenderer extends React.Component {
     // CAMERA creation and configuraiton
     const camera = (this.camera = new THREE.PerspectiveCamera(
       35,
-      this.canvas.clientWidth / this.canvas.clientHeight,
-      //this.canvas.width / this.canvas.height,
+      window.innerWidth / window.innerHeight,
       0.1,
       1000
     ));
 
-    camera.position.z = 25;
+    camera.position.set(100, 100, 100);
+    camera.lookAt(0, 0, 0);
 
     // add Orital Controler
     const controls = (this.controls = new OrbitControls(this.camera));
@@ -136,11 +136,10 @@ class ThreeRenderer extends React.Component {
   }
 
   onResize(e) {
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
-    this.renderer.setViewport(0, 0, this.canvas.width, this.canvas.height);
-    this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+    this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
   // When the user interact (orbital controller) with the scene, update the currently selected cube.

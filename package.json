@@ -5,8 +5,6 @@
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "grommet": "1.11.0",
-    "grommet-css": "1.6.0",
     "react": "16.3.2",
     "react-dom": "16.3.2",
     "react-scripts": "1.1.4",
