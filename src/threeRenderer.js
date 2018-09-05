@@ -18,9 +18,6 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
-    console.log(window.innerWidth);
-    console.log(window.innerHeight);
-
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -63,8 +60,10 @@ class ThreeRenderer extends React.Component {
       color: 0xff0000
     }));
 
-    this.selectedMaterial = new THREE.MeshLambertMaterial({
-      color: 0xffffff
+    this.selectedMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      opacity: 0.1,
+      transparent: true
     });
 
     //
