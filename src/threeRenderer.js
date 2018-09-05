@@ -18,6 +18,9 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
+    console.log(window.innerWidth);
+    console.log(window.innerHeight);
+
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -31,13 +34,14 @@ class ThreeRenderer extends React.Component {
     renderer.setClearColor(0xffffff, 1.0);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.setSize(640, 360);
 
     // CAMERA creation and configuraiton
     const camera = (this.camera = new THREE.PerspectiveCamera(
-      35,
+      45,
       window.innerWidth / window.innerHeight,
-      0.1,
-      1000
+      1,
+      10000
     ));
 
     camera.position.set(100, 100, 100);
@@ -129,6 +133,7 @@ class ThreeRenderer extends React.Component {
   }
 
   onResize(e) {
+    console.log("onResize");
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
@@ -236,8 +241,6 @@ class ThreeRenderer extends React.Component {
   }
 
   undoColorize(lastObj, lastColor) {
-    console.log(lastObj);
-    console.log(lastColor);
     const obj = this.getIntersectedObject();
     if (obj) obj.material = obj.currentColorMaterial;
 

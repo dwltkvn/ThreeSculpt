@@ -2,15 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ThreeRenderer from "./threeRenderer";
 
-const divStyle = {
-  border: "red",
-  borderStyle: "solid",
-  borderWidth: "0px",
-  flexDirection: "column",
-  flex: 1,
-  display: "flex"
-};
-
 const pico8Palette = [
   0x000000,
   0x1d2b53,
