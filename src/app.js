@@ -2,10 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import ThreeRenderer from "./threeRenderer";
+import FabButton from "./fabButton";
 
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import Tooltip from "@material-ui/core/Tooltip";
+
 import AddIcon from "@material-ui/icons/Add";
+import GestureIcon from "@material-ui/icons/Gesture";
+import BrushIcon from "@material-ui/icons/Brush";
+import UndoIcon from "@material-ui/icons/Undo";
 
 //const CmpntStateless = props => <div>{props.children}</div>;
 
@@ -27,10 +33,13 @@ const CmpntStateless3 = props => {
 const styles = theme => ({
   fab: {
     position: "fixed",
-    bottom: theme.spacing.unit * 2,
-    right: theme.spacing.unit * 2,
+    bottom: theme.spacing.unit * 4,
+    right: theme.spacing.unit * 4,
     display: "flex",
-    flexDirection: "column"
+    flexDirection: "column",
+    border: "red",
+    borderStyle: "solid",
+    borderWidth: "0px"
   }
 });
 
@@ -134,34 +143,23 @@ class App extends React.Component {
           cbUndoAvailable={b => this.setState({ stateUndoAvailable: b })}
         />
         <div className={classes.fab}>
-          <Button variant="fab" color="primary" aria-label="Add">
-            <AddIcon />
-          </Button>
-          <Button variant="fab" color="primary" aria-label="Add">
-            <AddIcon />
-          </Button>
+          <FabButton
+            title="Undo"
+            onClick={this.handleUndoClick}
+            disabled={!this.state.stateUndoAvailable}
+          >
+            <UndoIcon />
+          </FabButton>
+          <FabButton title="Colorize" onClick={this.handleColorizeClick}>
+            <BrushIcon />
+          </FabButton>
+          <FabButton title="Carve" onClick={this.handleSculptClick}>
+            <GestureIcon />
+          </FabButton>
         </div>
       </div>
     );
   }
-
-  /*
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <div>
-        <Button
-          variant="fab"
-          color="primary"
-          aria-label="Add"
-          className={classes.fab}
-        >
-          <AddIcon />
-        </Button>
-      </div>
-    );
-}*/
 }
 
 App.propTypes = {
