@@ -11,6 +11,8 @@ import BrushIcon from "@material-ui/icons/Brush";
 import UndoIcon from "@material-ui/icons/Undo";
 import ColorIcon from "@material-ui/icons/Colorize";
 
+import Slide from "@material-ui/core/Slide";
+
 //const CmpntStateless = props => <div>{props.children}</div>;
 
 /*
@@ -66,7 +68,8 @@ class App extends React.Component {
     this.state = {
       currentPaletteIndex: 0,
       currentPalatteString: "#000000",
-      stateUndoAvailable: false
+      stateUndoAvailable: false,
+      stateShowUI: false
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
     this.handleColorizeClick = this.handleColorizeClick.bind(this);
@@ -148,29 +151,32 @@ class App extends React.Component {
           paletteIndex={this.state.currentPaletteIndex}
           ref={el => (this.threeRendererRef = el)}
           cbUndoAvailable={b => this.setState({ stateUndoAvailable: b })}
+          cbShowUI={b => this.setState({ stateShowUI: b })}
         />
-        <div className={classes.fab}>
-          <FabButton
-            title="Undo"
-            onClick={this.handleUndoClick}
-            disabled={!this.state.stateUndoAvailable}
-          >
-            <UndoIcon />
-          </FabButton>
-          <FabButton
-            title="Change Color"
-            onClick={this.handleChangeColorClick}
-            backgroundColor={syncButtonStyle}
-          >
-            <ColorIcon />
-          </FabButton>
-          <FabButton title="Colorize" onClick={this.handleColorizeClick}>
-            <BrushIcon />
-          </FabButton>
-          <FabButton title="Carve" onClick={this.handleSculptClick}>
-            <GestureIcon />
-          </FabButton>
-        </div>
+        <Slide in={this.state.stateShowUI} direction="left">
+          <div className={classes.fab}>
+            <FabButton
+              title="Undo"
+              onClick={this.handleUndoClick}
+              disabled={!this.state.stateUndoAvailable}
+            >
+              <UndoIcon />
+            </FabButton>
+            <FabButton
+              title="Change Color"
+              onClick={this.handleChangeColorClick}
+              backgroundColor={syncButtonStyle}
+            >
+              <ColorIcon />
+            </FabButton>
+            <FabButton title="Colorize" onClick={this.handleColorizeClick}>
+              <BrushIcon />
+            </FabButton>
+            <FabButton title="Carve" onClick={this.handleSculptClick}>
+              <GestureIcon />
+            </FabButton>
+          </div>
+        </Slide>
       </div>
     );
   }
