@@ -41,14 +41,16 @@ class ThreeRenderer extends React.Component {
       10000
     ));
 
-    camera.position.set(100, 100, 100);
+    camera.position.set(25, 25, 25);
     camera.lookAt(0, 0, 0);
 
     // add Orital Controler
     const controls = (this.controls = new OrbitControls(this.camera));
 
     const gridHelper = new THREE.GridHelper(50, 50);
-    gridHelper.position.y = -4;
+    gridHelper.position.x = 0.5;
+    gridHelper.position.y = -4.5;
+    gridHelper.position.z = 0.5;
     scene.add(gridHelper);
 
     // GEOMETRY - Create our only geometry: a cube.
@@ -61,10 +63,13 @@ class ThreeRenderer extends React.Component {
     }));
 
     this.selectedMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      opacity: 0.1,
+      color: 0x000000,
+      opacity: 0.5,
       transparent: true
     });
+
+    //console.log(this.selectedMaterial);
+    //this.selectedMaterial.color.setHex(0x000000);
 
     //
     this.props.palette.forEach((c, idx) => {
@@ -132,7 +137,6 @@ class ThreeRenderer extends React.Component {
   }
 
   onResize(e) {
-    console.log("onResize");
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
 
@@ -176,12 +180,20 @@ class ThreeRenderer extends React.Component {
     }
   }
 
+  changeHighlightColor() {
+    this.selectedMaterial.color = this.colorMaterial[
+      (this.props.paletteIndex + 1) % this.colorMaterial.length
+    ].color;
+  }
+
   // update the currently selected cube color to the color the user selected.
   colorize() {
     const obj = this.getIntersectedObject();
     if (obj) {
       const prevColor = obj.currentColorMaterial;
       obj.currentColorMaterial = this.colorMaterial[this.props.paletteIndex];
+      //obj.material.color = obj.currentColorMaterial;
+      //this.selectedMaterial.color.setHex(obj.currentColorMaterial);
       let undoObj = {
         target: obj,
         undo: ThreeRenderer.UndoStates.UNDO_COLOR,

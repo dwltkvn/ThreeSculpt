@@ -5,13 +5,11 @@ import ThreeRenderer from "./threeRenderer";
 import FabButton from "./fabButton";
 
 import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Tooltip from "@material-ui/core/Tooltip";
 
-import AddIcon from "@material-ui/icons/Add";
 import GestureIcon from "@material-ui/icons/Gesture";
 import BrushIcon from "@material-ui/icons/Brush";
 import UndoIcon from "@material-ui/icons/Undo";
+import ColorIcon from "@material-ui/icons/Colorize";
 
 //const CmpntStateless = props => <div>{props.children}</div>;
 
@@ -67,6 +65,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       currentPaletteIndex: 0,
+      currentPalatteString: "#000000",
       stateUndoAvailable: false
     };
     this.handleSculptClick = this.handleSculptClick.bind(this);
@@ -82,6 +81,12 @@ class App extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener("keydown", this.handleKey);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextState.currentPaletteIndex !== this.state.currentPaletteIndex) {
+      if (this.threeRendererRef) this.threeRendererRef.changeHighlightColor();
+    }
   }
 
   // Keyboard shortcut to sculpt/colorize without having to used action buttons.
@@ -116,6 +121,8 @@ class App extends React.Component {
       currentPaletteIndex:
         (prevState.currentPaletteIndex + 1) % pico8Palette.length
     }));
+
+    //if (this.threeRendererRef) this.threeRendererRef.changeHighlightColor();
   }
 
   handleUndoClick() {
@@ -149,6 +156,13 @@ class App extends React.Component {
             disabled={!this.state.stateUndoAvailable}
           >
             <UndoIcon />
+          </FabButton>
+          <FabButton
+            title="Change Color"
+            onClick={this.handleChangeColorClick}
+            backgroundColor={syncButtonStyle}
+          >
+            <ColorIcon />
           </FabButton>
           <FabButton title="Colorize" onClick={this.handleColorizeClick}>
             <BrushIcon />

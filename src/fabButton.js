@@ -49,6 +49,7 @@ class FabButton extends React.Component {
           aria-label={this.props.title}
           onClick={this.props.onClick}
           disabled={this.props.disabled}
+          style={this.props.backgroundColor}
         >
           {this.props.children}
         </Button>
@@ -64,7 +65,8 @@ FabButton.propTypes = {
 FabButton.defaultProps = {
   title: "",
   onClick: null,
-  disabled: false
+  disabled: false,
+  backgroundColor: {}
 };
 
 /*
