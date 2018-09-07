@@ -1,5 +1,7 @@
 import React from "react";
 import * as THREE from "three";
+import Hammer from "hammerjs";
+
 const OrbitControls = require("three-orbit-controls")(THREE);
 
 class ThreeRenderer extends React.Component {
@@ -19,6 +21,13 @@ class ThreeRenderer extends React.Component {
   }
 
   componentDidMount() {
+    this.hammertime = new Hammer.Manager(this.canvas, {
+      recognizers: [
+        // RecognizerClass, [options], [recognizeWith, ...], [requireFailure, ...]
+        [Hammer.Tap, { event: "doubletap", taps: 2 }]
+      ]
+    });
+
     const raycaster = (this.raycaster = new THREE.Raycaster());
 
     const scene = (this.scene = new THREE.Scene());
@@ -124,6 +133,8 @@ class ThreeRenderer extends React.Component {
     window.addEventListener("resize", this.onResize);
     window.addEventListener("mousemove", this.onTouchMove);
     window.addEventListener("touchmove", this.onTouchMove, true);
+
+    this.hammertime.on("doubletap", () => this.props.cbToogleUI());
   }
 
   componentWillUnmount() {
@@ -150,8 +161,6 @@ class ThreeRenderer extends React.Component {
       this.highlightSelectedObject(this.prevSelectedObj, false);
     }
     this.prevSelectedObj = obj;
-
-    this.props.cbShowUI(true);
   }
 
   // cast a ray-line from the center of the screen (0,0), return the first interescted cube.

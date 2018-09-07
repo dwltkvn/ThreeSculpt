@@ -34,7 +34,14 @@ const styles = theme => ({
   fab: {
     position: "fixed",
     bottom: theme.spacing.unit * 4,
-    right: theme.spacing.unit * 4,
+    right: theme.spacing.unit * 4
+    /*display: "flex",
+    flexDirection: "column",
+    border: "red",
+    borderStyle: "solid",
+    borderWidth: "0px"*/
+  },
+  colfab: {
     display: "flex",
     flexDirection: "column",
     border: "red",
@@ -152,31 +159,40 @@ class App extends React.Component {
           ref={el => (this.threeRendererRef = el)}
           cbUndoAvailable={b => this.setState({ stateUndoAvailable: b })}
           cbShowUI={b => this.setState({ stateShowUI: b })}
+          cbToogleUI={() =>
+            this.setState((prevState, props) => ({
+              stateShowUI: !prevState.stateShowUI
+            }))
+          }
         />
-        <Slide in={this.state.stateShowUI} direction="left">
-          <div className={classes.fab}>
-            <FabButton
-              title="Undo"
-              onClick={this.handleUndoClick}
-              disabled={!this.state.stateUndoAvailable}
-            >
-              <UndoIcon />
-            </FabButton>
-            <FabButton
-              title="Change Color"
-              onClick={this.handleChangeColorClick}
-              backgroundColor={syncButtonStyle}
-            >
-              <ColorIcon />
-            </FabButton>
-            <FabButton title="Colorize" onClick={this.handleColorizeClick}>
-              <BrushIcon />
-            </FabButton>
+        <div className={classes.fab}>
+          <Slide in={this.state.stateShowUI} direction="left">
+            <div className={classes.colfab}>
+              <FabButton
+                title="Undo"
+                onClick={this.handleUndoClick}
+                disabled={!this.state.stateUndoAvailable}
+              >
+                <UndoIcon />
+              </FabButton>
+              <FabButton
+                title="Change Color"
+                onClick={this.handleChangeColorClick}
+                backgroundColor={syncButtonStyle}
+              >
+                <ColorIcon />
+              </FabButton>
+              <FabButton title="Colorize" onClick={this.handleColorizeClick}>
+                <BrushIcon />
+              </FabButton>
+            </div>
+          </Slide>
+          <div className={classes.colfab}>
             <FabButton title="Carve" onClick={this.handleSculptClick}>
               <GestureIcon />
             </FabButton>
           </div>
-        </Slide>
+        </div>
       </div>
     );
   }
